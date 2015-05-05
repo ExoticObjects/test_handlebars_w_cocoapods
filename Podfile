@@ -1,3 +1,4 @@
+
 platform :ios, '7.0'
 
 pod 'handlebars-objc', '~> 1.3.0'
@@ -27,11 +28,19 @@ post_install do |installer|
             file.display_name() == filename
         }
 
+		hb_file = files.first
+
+		# puts '*********************project file : ' + project.objects.inspect
+
+        puts '*********************hb_file.path : ' + hb_file.path + ' hb_file.uuid: ' + hb_file.uuid
+
         # get the PBXBuildFile references of the found files
         # PBXBuildFile actually contains flags for building the file
         build_files = files.map { |file|
             file.build_files()
         }.compact.flatten
+
+        # puts '*********************build files : ' + build_files.inspect
 
         # compiler flags key in settings
         compiler_flags_key = "COMPILER_FLAGS"
