@@ -5,22 +5,6 @@ pod 'handlebars-objc', '~> 1.3.0'
 
 post_install do |installer|
 
-	# Adds the specified compiler flags to the given file in the project.
-    #
-    # @param [Xcodeproj::Project] project
-    #                             The Xcode project instance.
-    #
-    # @param [String] filename
-    #                 The name of the file to work with.
-    #
-    # @param [String] new_compiler_flags
-    #                 The compiler flags to add.
-    #
-    # @example Disable some warning switches for JSONKit:
-    #   add_compiler_flags(installer.project,
-    #       "JSONKit.m",
-    #       "-Wno-deprecated-objc-isa-usage -Wno-format")
-    #
     def add_compiler_flags(project, filename, new_compiler_flags)
 
         # find all PBXFileReference objects of the given file
@@ -28,7 +12,9 @@ post_install do |installer|
             file.display_name() == filename
         }
 
-		hb_file = files.first
+		hb_xcconfig = files.first
+
+
 
 		# puts '*********************project file : ' + project.objects.inspect
 		# puts '*********************project native targets : ' + project.native_targets().inspect
@@ -36,12 +22,29 @@ post_install do |installer|
 		# Gets main debug and release targets
 		# puts '*********************project.build_configuration_list() : ' + project.build_configuration_list()
         
-        # puts '*********************hb_file.path : ' + hb_file.path + 
-        # 							' hb_file.uuid: ' + hb_file.uuid
+        # puts '*********************hb_xcconfig.path : ' + hb_xcconfig.path + 
+        # 							' hb_xcconfig.uuid: ' + hb_xcconfig.uuid
 
 		project.native_targets().map { |native_target| 
 
-			puts 'native_target: ' + native_target.build_configuration_list().build_configurations.inspect
+			# puts 'native_target.build_configurations: ' + native_target.build_configuration_list().build_configurations.inspect
+
+			configs = Array.new
+			for config in native_target.build_configuration_list().build_configurations
+
+				if config.base_configuration_reference.uuid == hb_xcconfig.uuid
+					configs.push(config)						
+				end
+				# puts 'config: ' + config.base_configuration_reference.uuid + ' hb_xcconfig.uuid: ' + hb_xcconfig.uuid
+			end
+
+			puts 'configs: ' + configs.inspect
+
+			# configs = native_target.build_configuration_list().build_configurations.select { |config| 
+			# 	config.base_configuration_reference == hb_xcconfig.uuid
+			# }
+
+			# puts 'configs: ' + configs.inspect
 		}
 
         # get the PBXBuildFile references of the found files
