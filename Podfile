@@ -31,14 +31,29 @@ post_install do |installer|
 		hb_file = files.first
 
 		# puts '*********************project file : ' + project.objects.inspect
+		# puts '*********************project native targets : ' + project.native_targets().inspect
 
-        puts '*********************hb_file.path : ' + hb_file.path + ' hb_file.uuid: ' + hb_file.uuid
+		# Gets main debug and release targets
+		# puts '*********************project.build_configuration_list() : ' + project.build_configuration_list()
+        
+        # puts '*********************hb_file.path : ' + hb_file.path + 
+        # 							' hb_file.uuid: ' + hb_file.uuid
+
+		project.native_targets().map { |native_target| 
+
+			puts 'native_target: ' + native_target.build_configuration_list().build_configurations.inspect
+		}
 
         # get the PBXBuildFile references of the found files
         # PBXBuildFile actually contains flags for building the file
         build_files = files.map { |file|
             file.build_files()
+            puts 'build_file: ' + file.inspect
         }.compact.flatten
+
+        # build_configurations = project.build_configurations().select { |config]
+        # 	config.
+
 
         # puts '*********************build files : ' + build_files.inspect
 
